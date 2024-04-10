@@ -7,30 +7,29 @@ on:
     branches: [ "main" ]
 
 jobs:
-
-  build:
-
+  pre-build:
     runs-on: ubuntu-latest
-
     steps:
     - name: Login to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}    
-    #- uses: actions/checkout@v3
-    # - name: Build the Docker image
-    #   run: docker build . --file Dockerfile --tag packed-log-viewer:$(git rev-parse --short HEAD)
-    # - name: Tag the Docker image
-    #   run: docker tag packed-log-viewer:$(git rev-parse --short HEAD) packed-log-viewer:latest
-    # - name: Push the Docker image
-    # docker/build-push-action@v5
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag packed-log-viewer:$(git rev-parse --short HEAD)
+  publish:
+    runs-on: ubuntu-latest
+    steps:
     - name: Get tag
       run: short_sha=$(git rev-parse --short $GITHUB_SHA)
-    - name: Build and push
-      uses: docker/build-push-action@v5
-      with:
-        push: true
-        tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/packed-log-viewer:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/packed-log-viewer:${{ env.short_sha }}
+    - name: Tag
+      run: |
+          docker tag packed-log-viewer:latest ${{ secrets.DOCKERHUB_USERNAME }}/packed-log-viewer:latest
+          docker tag packed-log-viewer:${{ env.short_sha }} ${{ secrets.DOCKERHUB_USERNAME }}/packed-log-viewer:${{ env.short_sha }}
+    - name: Push
+      run: |
+        docker push -a ${{ secrets.DOCKERHUB_USERNAME }}/packed-log-viewer
