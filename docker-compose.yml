@@ -1,0 +1,36 @@
+version: "3"
+services:
+  packed-log-viewer:
+    container_name: packed-log-viewer
+    image: packed-log-viewer:latest
+    restart: always
+    ports:
+      - 8000:80
+    volumes:
+      - ./pglogs:/laravel/storage/logs
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - ./pglogs:/logs
+    command: bash -c "mkdir -p /logs/ && touch /logs/postgresql.log && chmod -R 777 /logs && su postgres -c \"postgres -c logging_collector=on -c log_directory=/logs -c log_filename=postgresql.log -c log_statement=all\""
+    #command: ["postgres", "-c", "logging_collector=on", "-c", "log_directory=/logs", "-c", "log_filename=postgresql.log", "-c", "log_statement=all"]
+    #command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+  #nginx:
+    #container_name: nginx
+    #image: nginx
+    #restart: always
+    #ports:
+      #- 80:80
+      #- 443:443
+    #volumes:
+      #- ./nginx:/etc/nginx
+      #- /etc/letsencrypt:/etc/letsencrypt
