@@ -1,5 +1,10 @@
 FROM ubuntu:noble
 
+LABEL version="1.0"
+LABEL name="packed-log-viewer"
+LABEL description="opcodesio/log-viewer in a container"
+MAINTAINER illia.bilyk@paygames.net
+
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 RUN apt update

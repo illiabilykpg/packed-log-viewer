@@ -1,3 +1,4 @@
+# demo POC
 version: "3"
 services:
   packed-log-viewer:
