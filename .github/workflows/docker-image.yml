@@ -26,7 +26,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Get tag
-      uses: actions/checkout@v3
       run: short_sha=$(git rev-parse --short $GITHUB_SHA)
     - name: Tag
       run: |
