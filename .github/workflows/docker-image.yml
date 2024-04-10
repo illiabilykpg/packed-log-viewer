@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  pre-build:
+  main:
     runs-on: ubuntu-latest
     steps:
     - name: Login to Docker Hub
@@ -15,16 +15,9 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag packed-log-viewer:$(git rev-parse --short HEAD)
-  publish:
-    runs-on: ubuntu-latest
-    steps:
     - uses: actions/checkout@v3
+      run: docker build . --file Dockerfile --tag packed-log-viewer:$(git rev-parse --short HEAD)
     - name: Get tag
       run: short_sha=$(git rev-parse --short $GITHUB_SHA)
     - name: Tag
