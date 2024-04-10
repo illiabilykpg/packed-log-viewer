@@ -25,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Get tag
+      uses: actions/checkout@v3
       run: short_sha=$(git rev-parse --short $GITHUB_SHA)
     - name: Tag
       run: |
